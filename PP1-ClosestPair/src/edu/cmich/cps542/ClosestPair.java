@@ -28,8 +28,14 @@ public class ClosestPair {
 		
 		
 		System.out.println(points.size());
-		sort(points, 0 ,points.size()-1);
+		points = sort(points, 0 ,points.size()-1,false);
 		
+		System.out.println("-----------------------------------------");
+		System.out.println(points.toString());
+		ArrayList<Point> ypoints = new ArrayList<Point>();
+		
+		
+		ypoints = sort(points, 0 ,points.size()-1,true);
 		System.out.println(points.toString());
 
 	}
@@ -50,24 +56,35 @@ public class ClosestPair {
 	}
 
 
-	public static void sort(ArrayList<Point> points, int left, int right) {
+	public static ArrayList<Point>  sort(ArrayList<Point> points, int left, int right, boolean sortByYpoint) {
+		
 		if(left<right) {
 			int mid = (left+right) /2;
-
+			
+			
+			if(sortByYpoint) {
 			//sort the first and second halves
-			sort(points,left,mid);
-			sort(points, mid+1, right);
+			sort(points,left,mid,true);
+			sort(points, mid+1, right,true);
 
 
-			merge(points, left, mid, right);
+			merge(points, left, mid, right, true);
+			}
+			else {
+				sort(points,left,mid,false);
+				sort(points, mid+1, right,false);
 
+
+				merge(points, left, mid, right,false);
+			}
 		}
+		return points;
 
 		
 
 	}
 
-	public static void merge(ArrayList<Point> points,int left, int mid, int right) {
+	public static void merge(ArrayList<Point> points,int left, int mid, int right,  boolean sortByYpoint) {
 		int num1 = mid - left + 1;
 		int num2 = right - mid;
 				
@@ -90,6 +107,23 @@ public class ClosestPair {
 		int i = 0,j = 0 ;
 
 		int k =left ;
+		
+		
+		//merge by x-points or y points depending upon input
+		if(sortByYpoint) {
+			while(i<num1 && j <num2) {
+				if((leftSub[i].y) <= (rightSub[j].y)) {
+					points.set(k, leftSub[i]) ;
+					i++ ; 
+				}
+				else {
+					points.set(k, rightSub[j]) ;
+					j++;
+
+				}
+				k++ ;
+			}
+		}
 		while(i<num1 && j <num2) {
 			if((leftSub[i].x) <= (rightSub[j].x)) {
 				points.set(k, leftSub[i]) ;
