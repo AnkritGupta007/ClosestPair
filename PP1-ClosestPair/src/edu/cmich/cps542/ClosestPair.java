@@ -22,29 +22,81 @@ public class ClosestPair {
 			}
 		}
 		points.add(new Point(0, 0));
-		
+
 		System.out.println(points.toString());
 		System.out.println("-----------------------------------------");
-		
-		
+
+
 		System.out.println(points.size());
 		points = sort(points, 0 ,points.size()-1,false);
 		
+		
+
 		System.out.println("-----------------------------------------");
 		System.out.println(points.toString());
 		ArrayList<Point> ypoints = new ArrayList<Point>();
-		
-		
+		ypoints = (ArrayList<Point>) points.clone() ;
+
+
 		ypoints = sort(points, 0 ,points.size()-1,true);
 		System.out.println(points.toString());
+		
+		System.out.println(efficientClosestPair(points, ypoints));
 
 	}
 
 	public static PointPair efficientClosestPair(ArrayList<Point> pointsXOrdered, ArrayList<Point> pointsYOrdered) {
 
+		ArrayList<Point> xOrderedLeft = new ArrayList<Point>();
+		ArrayList<Point> yOrderedLeft = new ArrayList<Point>();
+		ArrayList<Point> xOrderedRight = new ArrayList<Point>();
+		ArrayList<Point> yOrderedRight = new ArrayList<Point>();
+
+		PointPair distanceLeft;
+		PointPair distanceRight;
+		PointPair minDistPointPair = null;
+		double minDistance;
 
 
-		return null;
+		if(pointsXOrdered.size() <=3) {
+			// return minimal distance found by brute-force algorithm
+		}
+		else {
+
+			// copy first n/2 points of pointsXOrdered to array xOrderedLeft
+			for(int i=0; i < pointsXOrdered.size()/2; i++) {
+				xOrderedLeft.add(pointsXOrdered.get(i));
+			}
+
+			// copy same n/2 points from pointsYOrdered to array yOrderedLeft
+			for(int i=0; i < pointsYOrdered.size()/2; i++) {
+				yOrderedLeft.add(pointsYOrdered.get(i));
+			}
+
+			// copy remaining n/2 elements from pointsXOrdered to array xOrderedRight
+			for(int i=pointsXOrdered.size()/2; i < pointsXOrdered.size(); i++) {
+				xOrderedRight.add(pointsXOrdered.get(i));
+			}
+
+			// copy remaining n/2 elements from pointsYOrdered to array yOrderedRight
+			for(int i=pointsYOrdered.size()/2; i < pointsYOrdered.size(); i++) {
+				yOrderedRight.add(pointsYOrdered.get(i));
+			}
+
+			distanceLeft = efficientClosestPair(xOrderedLeft, yOrderedLeft);
+			distanceRight = efficientClosestPair(xOrderedRight, yOrderedRight);
+
+			//			minDistance = Math.min(distanceLeft.distBetweenPoints(), distanceRight.distBetweenPoints());
+
+			if(distanceLeft.distBetweenPoints() < distanceRight.distBetweenPoints()) {
+				minDistPointPair = distanceLeft;
+			} else {
+				minDistPointPair = distanceRight;
+			}
+
+		}
+
+		return minDistPointPair;
 
 	}
 
@@ -57,18 +109,18 @@ public class ClosestPair {
 
 
 	public static ArrayList<Point>  sort(ArrayList<Point> points, int left, int right, boolean sortByYpoint) {
-		
+
 		if(left<right) {
 			int mid = (left+right) /2;
-			
-			
+
+
 			if(sortByYpoint) {
-			//sort the first and second halves
-			sort(points,left,mid,true);
-			sort(points, mid+1, right,true);
+				//sort the first and second halves
+				sort(points,left,mid,true);
+				sort(points, mid+1, right,true);
 
 
-			merge(points, left, mid, right, true);
+				merge(points, left, mid, right, true);
 			}
 			else {
 				sort(points,left,mid,false);
@@ -80,21 +132,21 @@ public class ClosestPair {
 		}
 		return points;
 
-		
+
 
 	}
 
 	public static void merge(ArrayList<Point> points,int left, int mid, int right,  boolean sortByYpoint) {
 		int num1 = mid - left + 1;
 		int num2 = right - mid;
-				
+
 		// try with Arrays.
 		Point leftSub[] = new Point[num1];
 		Point rightSub[] = new Point[num2];
 
 
 		//copy data to temp ArrayLists
-		
+
 		//the problem in the loop
 		for(int i = 0; i < num1; ++i) {
 			leftSub[i] = points.get(left+i);
@@ -107,8 +159,8 @@ public class ClosestPair {
 		int i = 0,j = 0 ;
 
 		int k =left ;
-		
-		
+
+
 		//merge by x-points or y points depending upon input
 		if(sortByYpoint) {
 			while(i<num1 && j <num2) {
