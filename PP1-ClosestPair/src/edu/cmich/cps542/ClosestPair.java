@@ -37,6 +37,12 @@ public class ClosestPair {
 		ArrayList<Point> xOrderedRight = new ArrayList<Point>();
 		ArrayList<Point> yOrderedRight = new ArrayList<Point>();
 		
+		PointPair distanceLeft;
+		PointPair distanceRight;
+		PointPair minDistPointPair = null;
+		double minDistance;
+		
+		
 		if(pointsXOrdered.size() <=3) {
 			// return minimal distance found by brute-force algorithm
 		}
@@ -62,10 +68,20 @@ public class ClosestPair {
 				yOrderedRight.add(pointsYOrdered.get(i));
 			}
 			
+			distanceLeft = efficientClosestPair(xOrderedLeft, yOrderedLeft);
+			distanceRight = efficientClosestPair(xOrderedRight, yOrderedRight);
 			
+//			minDistance = Math.min(distanceLeft.distBetweenPoints(), distanceRight.distBetweenPoints());
+		
+			if(distanceLeft.distBetweenPoints() < distanceRight.distBetweenPoints()) {
+				minDistPointPair = distanceLeft;
+			} else {
+				minDistPointPair = distanceRight;
+			}
+		
 		}
 			
-		return null;
+		return minDistPointPair;
 			
 	}
 	
@@ -77,25 +93,10 @@ public class ClosestPair {
 	}
 	
 	
-	public static ArrayList<Point> sort(ArrayList<Point> points, int left, int right, int mid) {
-		int num1 = mid - left + 1;
-		int num2 = right - mid;
+	public static ArrayList<Point> sort(ArrayList<Point> points) {
 		
-		ArrayList<Point> leftSub = new ArrayList<Point>();
-		ArrayList<Point> rightSub = new ArrayList<Point>();
-		
-		for(int i = 0; i < num1; i++) {
-			leftSub.set(i, points.get(left+i));
-		}
-		for(int i=0; i < num2; i++) {
-			rightSub.set(i, points.get(mid+1+i));
-		}
-		
-		// . . .
 		
 		return null;
 	}
-	
-	// merge method here
-	
+		
 }
