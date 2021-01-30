@@ -29,8 +29,8 @@ public class ClosestPair {
 
 		System.out.println(points.size());
 		points = sort(points, 0 ,points.size()-1,false);
-		
-		
+
+
 
 		System.out.println("-----------------------------------------");
 		System.out.println(points.toString());
@@ -40,7 +40,7 @@ public class ClosestPair {
 
 		ypoints = sort(points, 0 ,points.size()-1,true);
 		System.out.println(points.toString());
-		
+
 		System.out.println(efficientClosestPair(points, ypoints));
 
 	}
@@ -59,7 +59,8 @@ public class ClosestPair {
 
 
 		if(pointsXOrdered.size() <=3) {
-			// return minimal distance found by brute-force algorithm
+			PointPair result = bruteClosestPair(pointsXOrdered);
+			return result;
 		}
 		else {
 
@@ -101,9 +102,27 @@ public class ClosestPair {
 	}
 
 	public static PointPair bruteClosestPair(ArrayList<Point> points) {
+		PointPair temp = null; 
+		PointPair result = null;
+
+		double minDistance = Double.POSITIVE_INFINITY;
+		double tempDistance = 0;
+		
+		for(int i =0; i<points.size();i++) {
+			for(int j=i+1 ; j<points.size(); j++) {
+				temp =new PointPair(points.get(i), points.get(j));
+				tempDistance = temp.distBetweenPoints();
+				if(tempDistance < minDistance){
+					result =temp ;
+					minDistance=tempDistance ;
+				}
 
 
-		return null;
+			}
+
+		}
+
+		return result;
 
 	}
 
