@@ -16,32 +16,44 @@ public class ClosestPair {
 		/* call efficientClosestPair here */
 		ArrayList<Point> points = new ArrayList<Point>();
 
-		for(double i = 3.25; i >0; i--) {
-			for(double j = 3.25; j > 0; j--) {
+		for(double i = -350.25; i < 350; i++) {
+			for(double j = -350.25; j < 350; j++) {
 				points.add(new Point(i, j));
 			}
 		}
 		points.add(new Point(0, 0));
 
-		System.out.println(points.toString());
-		System.out.println("-----------------------------------------");
+		ArrayList<Point> pointsXOrdered = (ArrayList<Point>) points.stream().
+				sorted((p1, p2) -> (Double.compare(p1.x, p2.x))).
+				collect(Collectors.toList());
 
+		ArrayList<Point> pointsYOrdered = (ArrayList<Point>) points.stream().
+				sorted((p1, p2) -> (Double.compare(p1.y, p2.y))).
+				collect(Collectors.toList());
 
-		System.out.println(points.size());
-		points = sort(points, 0 ,points.size()-1,false);
+		//		PointPair closestPair = ClosestPair.bruteClosestPair(pointsXOrdered);		
+		PointPair closestPair = ClosestPair.efficientClosestPair(pointsXOrdered, pointsYOrdered);
+		System.out.println(closestPair.toString());
 
-
-
-		System.out.println("-----------------------------------------");
-		System.out.println(points.toString());
-		ArrayList<Point> ypoints = new ArrayList<Point>();
-		ypoints = (ArrayList<Point>) points.clone() ;
-
-
-		ypoints = sort(points, 0 ,points.size()-1,true);
-		System.out.println(points.toString());
-
-		System.out.println(efficientClosestPair(points, ypoints));
+		////		System.out.println(points.toString());
+		////		System.out.println("-----------------------------------------");
+		////
+		//
+		////		System.out.println(points.size());
+		//		points = sort(points, 0 ,points.size()-1,false);
+		//
+		//
+		//
+		////		System.out.println("-----------------------------------------");
+		////		System.out.println(points.toString());
+		//		ArrayList<Point> ypoints = new ArrayList<Point>();
+		//		ypoints = (ArrayList<Point>) points.clone() ;
+		//
+		//
+		//		ypoints = sort(points, 0 ,points.size()-1,true);
+		////		System.out.println(points.toString());
+		//
+		////		System.out.println(efficientClosestPair(points, ypoints).toString());
 
 	}
 
@@ -56,7 +68,9 @@ public class ClosestPair {
 		PointPair distanceRight;
 		PointPair minDistPointPair = null;
 		double minDistance;
-
+		double minDistanceSqr;
+		ArrayList<Point> S = new ArrayList<>();
+		Point m;
 
 		if(pointsXOrdered.size() <=3) {
 			PointPair result = bruteClosestPair(pointsXOrdered);
@@ -94,6 +108,38 @@ public class ClosestPair {
 			} else {
 				minDistPointPair = distanceRight;
 			}
+			minDistance = minDistPointPair.distBetweenPoints();
+
+
+			//
+			 m  = pointsXOrdered.get(pointsXOrdered.size()/2 -1);
+
+			
+			// values are not getting stored in the S after each recursive call
+			for(Point point: pointsYOrdered) {
+				if(Math.abs((point.x - m.x))<minDistance) {
+					S.add(point);
+				}
+			}
+			minDistanceSqr = Math.pow(minDistance, 2);
+			int num = S.size();
+
+			// two temp variables to store the pointPair in S and it's SquaredDistance
+			PointPair temp;
+			double tempDistanceSqr;
+			for(int i=0; i<num -2 ;i++  ) {
+				int k = i+1 ;
+				while ( (k<= (num -1)) && (Math.pow(S.get(k).y -S.get(i).y, 2)< minDistanceSqr)) {
+					temp = new PointPair(S.get(k),S.get(i));
+					tempDistanceSqr=Math.sqrt(temp.distBetweenPoints());
+					if(tempDistanceSqr < minDistanceSqr) {
+						minDistanceSqr = tempDistanceSqr;
+						minDistPointPair = temp ;
+						k++;
+					}
+
+				}
+			}	
 
 		}
 
@@ -107,7 +153,7 @@ public class ClosestPair {
 
 		double minDistance = Double.POSITIVE_INFINITY;
 		double tempDistance = 0;
-		
+
 		for(int i =0; i<points.size();i++) {
 			for(int j=i+1 ; j<points.size(); j++) {
 				temp =new PointPair(points.get(i), points.get(j));
@@ -116,12 +162,8 @@ public class ClosestPair {
 					result =temp ;
 					minDistance=tempDistance ;
 				}
-
-
 			}
-
 		}
-
 		return result;
 
 	}
