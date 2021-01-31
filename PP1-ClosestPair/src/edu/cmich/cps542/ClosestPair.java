@@ -73,8 +73,9 @@ public class ClosestPair {
 		Point m;
 
 		if(pointsXOrdered.size() <=3) {
-			PointPair result = bruteClosestPair(pointsXOrdered);
-			return result;
+			 minDistPointPair = bruteClosestPair(pointsXOrdered);
+			 minDistance = minDistPointPair.distBetweenPoints();
+			 minDistanceSqr = minDistPointPair.distSqrdBetweenPoints();
 		}
 		else {
 
@@ -121,7 +122,7 @@ public class ClosestPair {
 					S.add(point);
 				}
 			}
-			minDistanceSqr = Math.pow(minDistance, 2);
+			minDistanceSqr = minDistPointPair.distSqrdBetweenPoints();
 			int num = S.size();
 
 			// two temp variables to store the pointPair in S and it's SquaredDistance
@@ -131,7 +132,7 @@ public class ClosestPair {
 				int k = i+1 ;
 				while ( (k<= (num -1)) && (Math.pow(S.get(k).y -S.get(i).y, 2)< minDistanceSqr)) {
 					temp = new PointPair(S.get(k),S.get(i));
-					tempDistanceSqr=Math.sqrt(temp.distBetweenPoints());
+					tempDistanceSqr=temp.distSqrdBetweenPoints();
 					if(tempDistanceSqr < minDistanceSqr) {
 						minDistanceSqr = tempDistanceSqr;
 						minDistPointPair = temp ;
