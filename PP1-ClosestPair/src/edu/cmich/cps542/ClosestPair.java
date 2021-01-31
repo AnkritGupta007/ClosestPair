@@ -1,21 +1,27 @@
 package edu.cmich.cps542;
 
 import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Random;
-//import java.util.stream.Collectors;
 
+
+/** 
+ * sorts an ArrayList of points before utilizing the
+ * Efficient Closest Pair algorithm to find the two points
+ * with the shortest distance (the closest pair). 
+ * 
+ * @author crowl1rr gupta4a
+ * @since 1-31-2021
+ */
 public class ClosestPair {
 
 	public static void main(String[] args) {
 
+		// defined variables
 		ArrayList<Point> points = new ArrayList<Point>();
 		ArrayList<Point> pointsXOrdered = new ArrayList<Point>();
 		ArrayList<Point> pointsYOrdered = new ArrayList<Point>();
 		PointPair closestPair = new PointPair(null, null);
 		
 		/* {(2, 4), (10, 2), (3, 5), (7, 8), (6, 8), (1,1)} */
-
 		points.add(new Point(2, 4));
 		points.add(new Point(10, 2));
 		points.add(new Point(3, 5));
@@ -26,24 +32,35 @@ public class ClosestPair {
 		System.out.println("points: " + points.toString());
 		System.out.println("--------------------------------------------------------------------------");
 		
-
+		// initialize both ordered lists to be equal to the points ArrayList
 		pointsXOrdered = (ArrayList<Point>) points.clone();
 		pointsYOrdered = (ArrayList<Point>) points.clone();
 		
 		/* use your sort method here */
 		sort(pointsXOrdered, 0, pointsXOrdered.size()-1, false);
 		sort(pointsYOrdered, 0, pointsYOrdered.size() -1, true);
-		
-//		System.out.println("XOrdered: " + pointsXOrdered.toString());
-//		System.out.println("YOrdered: " + pointsYOrdered.toString());
+
 		
 		/* call efficientClosestPair here */
 		closestPair = efficientClosestPair(pointsXOrdered, pointsYOrdered);
 		
-		System.out.println(closestPair.toString());
+		System.out.println(closestPair.toString()); // print out closest pair result to console
 
 	}
 
+	/**
+	 * Implementation of the EfficientClosestPair algorithm. The algorithm
+	 * works by splitting the points into two partitions and comparing points on
+	 * both sides to find the smallest distance. The algorithm then checks
+	 * the points closest to the partition line to see if the closest pair
+	 * exists over that line.  Whatever two points have the smallest distance
+	 * between them are stored in a PointPair and returned.
+	 * 
+	 * @param pointsXOrdered Set of points ordered in ascending X order
+	 * @param pointsYOrdered Set of points ordered in ascending Y order
+	 * @return PointPair containing the pair of points with the shortest
+	 * distance between them
+	 */
 	public static PointPair efficientClosestPair(ArrayList<Point> pointsXOrdered, ArrayList<Point> pointsYOrdered) {
 
 		ArrayList<Point> xOrderedLeft = new ArrayList<Point>();
@@ -60,6 +77,7 @@ public class ClosestPair {
 		Point m;
 
 		if(pointsXOrdered.size() <=3) {
+			// few enough points that we can use a brute force approach 
 			 minDistPointPair = bruteClosestPair(pointsXOrdered);
 			 minDistance = minDistPointPair.distBetweenPoints();
 			 minDistanceSqr = minDistPointPair.distSqrdBetweenPoints();
@@ -86,23 +104,26 @@ public class ClosestPair {
 				yOrderedRight.add(pointsYOrdered.get(i));
 			}
 
+			// find smallest distance on left half
 			distanceLeft = efficientClosestPair(xOrderedLeft, yOrderedLeft);
+			
+			// find smallest distance on right half
 			distanceRight = efficientClosestPair(xOrderedRight, yOrderedRight);
 
-			//			minDistance = Math.min(distanceLeft.distBetweenPoints(), distanceRight.distBetweenPoints());
-
+			// determine which side has the closest pair
 			if(distanceLeft.distBetweenPoints() < distanceRight.distBetweenPoints()) {
 				minDistPointPair = distanceLeft;
 			} else {
 				minDistPointPair = distanceRight;
 			}
+			
+			// store the minimum distance to be utilized later
 			minDistance = minDistPointPair.distBetweenPoints();
 
 
 			 m  = pointsXOrdered.get(pointsXOrdered.size()/2 -1);
 
-			
-			// values are not getting stored in the S after each recursive call
+			 // store any points close to the partition line in another ArrayList (S)
 			for(Point point: pointsYOrdered) {
 				if(Math.abs((point.x - m.x))<minDistance) {
 					S.add(point);
@@ -114,6 +135,10 @@ public class ClosestPair {
 			// two temp variables to store the pointPair in S and it's SquaredDistance
 			PointPair temp;
 			double tempDistanceSqr;
+			
+			// check point pairs close to the partition line to see if any pairs
+			// have a minimal distance between them.  If so, then this is the new
+			// point pair.
 			for(int i=0; i<num -2 ;i++  ) {
 				int k = i+1 ;
 				while ( (k<= (num -1)) && (Math.pow(S.get(k).y -S.get(i).y, 2)< minDistanceSqr)) {
@@ -131,19 +156,28 @@ public class ClosestPair {
 		}
 
 		return minDistPointPair;
-
 	}
 
+	
+	
+	/**
+	 * Brute force approach to find a pair of points with the smallest
+	 * distance between them. Compares the distance between all
+	 * existing points to find the closest pair.
+	 * 
+	 * @param points ArrayList of points to check
+	 * @return PointPair with the smallest distance between points
+	 */
 	public static PointPair bruteClosestPair(ArrayList<Point> points) {
 		PointPair temp = null; 
 		PointPair result = null;
 
-		double minDistance = Double.POSITIVE_INFINITY;
+		double minDistance = Double.POSITIVE_INFINITY; // set minDistance to highest possible value
 		double tempDistance = 0;
 
 		for(int i =0; i<points.size();i++) {
 			for(int j=i+1 ; j<points.size(); j++) {
-				temp =new PointPair(points.get(i), points.get(j));
+				temp = new PointPair(points.get(i), points.get(j));
 				tempDistance = temp.distBetweenPoints();
 				if(tempDistance < minDistance){
 					result =temp ;
@@ -151,11 +185,21 @@ public class ClosestPair {
 				}
 			}
 		}
+		
 		return result;
-
 	}
 
 
+	/**
+	 * Sorts an ArrayList of points utilizing the Merge Sort approach.
+	 * 
+	 * @param points The ArrayList of points to be sorted
+	 * @param left The leftmost index value
+	 * @param right The rightmost index value
+	 * @param sortByYpoint Boolean denoting whether we want to sort by the X or Y coordinate.
+	 * False signifies sort by X values and True signifies sort by Y values.
+	 * @return ArrayList of sorted Points
+	 */
 	public static ArrayList<Point>  sort(ArrayList<Point> points, int left, int right, boolean sortByYpoint) {
 
 		if(left<right) {
@@ -178,12 +222,22 @@ public class ClosestPair {
 				merge(points, left, mid, right,false);
 			}
 		}
+		
 		return points;
-
-
-
 	}
 
+	/**
+	 * Merging method for Merge Sort-ing the ArrayLists of points.  Compares values
+	 * and merges them into the list one by one in ascending order.
+	 * 
+	 * @param points The ArrayList of Points to be sorted
+	 * @param left The smallest index value
+	 * @param mid The mid point index
+	 * @param right The largest index value
+	 * @param mergeByYpoint Boolean for whether to merge based on X or Y coordinate value.
+	 * False means to merge based on X-coordinate values and True means to merge based on
+	 * Y-coordinate values.
+	 */
 	public static void merge(ArrayList<Point> points,int left, int mid, int right,  boolean mergeByYpoint) {
 		int num1 = mid - left + 1;
 		int num2 = right - mid;
@@ -194,7 +248,6 @@ public class ClosestPair {
 
 
 		//copy data to temp ArrayLists
-
 		for(int i = 0; i < num1; ++i) {
 			leftSub[i] = points.get(left+i);
 		}
@@ -202,14 +255,11 @@ public class ClosestPair {
 			rightSub[i]= points.get(mid+1+i);
 		}
 
-		// . . .
 		int i = 0,j = 0 ;
-
 		int k =left ;
 
-
-		//merge by x-points or y points depending upon input
 		if(mergeByYpoint) {
+			// merge by y-coordinate values
 			while(i<num1 && j <num2) {
 				if((leftSub[i].y) <= (rightSub[j].y)) {
 					points.set(k, leftSub[i]) ;
@@ -223,6 +273,7 @@ public class ClosestPair {
 			}
 		}
 		else {
+			// merge by x-coordinate values
 			while(i<num1 && j <num2) {
 				if((leftSub[i].x) <= (rightSub[j].x)) {
 					points.set(k, leftSub[i]) ;
