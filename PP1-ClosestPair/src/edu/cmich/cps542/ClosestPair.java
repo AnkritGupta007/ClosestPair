@@ -39,6 +39,9 @@ public class ClosestPair {
 		/* use your sort method here */
 		sort(pointsXOrdered, 0, pointsXOrdered.size()-1, false);
 		sort(pointsYOrdered, 0, pointsYOrdered.size() -1, true);
+		
+		System.out.println("xOrdered: " + pointsXOrdered.toString());
+		System.out.println("yOrdered: " + pointsYOrdered.toString());
 
 		
 		/* call efficientClosestPair here */
@@ -147,8 +150,8 @@ public class ClosestPair {
 					if(tempDistanceSqr < minDistanceSqr) {
 						minDistanceSqr = tempDistanceSqr;
 						minDistPointPair = temp ;
-						k++;
 					}
+					k++;
 
 				}
 			}	
